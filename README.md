@@ -1,5 +1,5 @@
-# Python
+## Запуск (Hello)
+python3 app/hello.py
 
-## Запуск
-```bash
+## Запуск (PostgreSQL)
 python3 app/main.py
