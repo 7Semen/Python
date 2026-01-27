@@ -28,5 +28,7 @@ python3 -m app.init_db
 
 ### 4. Основной запуск приложения
 uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload
+
 http://127.0.0.1:8000/docs
+
 http://127.0.0.1:8000/health
