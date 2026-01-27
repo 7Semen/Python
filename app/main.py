@@ -1,20 +1,11 @@
-from app.db.db import get_session
-from app.db import crud
+from fastapi import FastAPI
+from app.api import books, categories
 
-def main():
-    db = get_session()
-    try:
-        categories = crud.list_categories(db)
-        print("Категории:")
-        for c in categories:
-            print(f"- [{c.id}] {c.title}")
+app = FastAPI()
 
-        print("\nКниги:")
-        books = crud.list_books(db)
-        for b in books:
-            print(f"- [{b.id}] {b.title} | {b.price} | category_id={b.category_id}")
-    finally:
-        db.close()
+app.include_router(categories.router)
+app.include_router(books.router)
 
-if __name__ == "__main__":
-    main()
+@app.get("/health")
+def health():
+    return {"status": "ok"}
