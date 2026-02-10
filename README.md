@@ -44,7 +44,7 @@ http://localhost:8000/health
 
 http://`<IP>`:8000/docs
 
-где IP — адрес WSL, полученный командой:
+где `<IP>` — адрес WSL, полученный командой:
 
 hostname -I
 
