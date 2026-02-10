@@ -30,7 +30,7 @@ sudo service postgresql start
 python3 -m app.init_db
 
 ### 5. Основной запуск приложения
-uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+uvicorn app.main:app --host 0.0.0.0 --port 8000
 
 Swagger UI:
 http://localhost:8000/docs
