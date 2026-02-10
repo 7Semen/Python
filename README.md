@@ -42,9 +42,11 @@ http://localhost:8000/health
 
 После этого открыть в браузере:
 
-http://IP:8000/docs
+http://`<IP>`:8000/docs
 
 где IP — адрес WSL, полученный командой:
 
 hostname -I
 
+Например:
+http://172.30.xxx.xxx:8000/docs
