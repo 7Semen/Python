@@ -1,80 +1,81 @@
-from sqlalchemy import select
 from sqlalchemy.orm import Session
-from .models import Category, Book
+from sqlalchemy import select
 
-# ---------- Categories CRUD ----------
+from app.db import models
 
-def create_category(db: Session, title: str) -> Category:
-    cat = Category(title=title)
-    db.add(cat)
+# ---------- Categories ----------
+def list_categories(db: Session):
+    return db.execute(select(models.Category)).scalars().all()
+
+def get_category(db: Session, category_id: int):
+    return db.get(models.Category, category_id)
+
+def create_category(db: Session, title: str):
+    obj = models.Category(title=title)
+    db.add(obj)
     db.commit()
-    db.refresh(cat)
-    return cat
+    db.refresh(obj)
+    return obj
 
-def get_category_by_id(db: Session, category_id: int) -> Category | None:
-    return db.get(Category, category_id)
-
-def get_category_by_title(db: Session, title: str) -> Category | None:
-    return db.execute(select(Category).where(Category.title == title)).scalar_one_or_none()
-
-def list_categories(db: Session) -> list[Category]:
-    return list(db.execute(select(Category).order_by(Category.id)).scalars().all())
-
-def update_category(db: Session, category_id: int, new_title: str) -> Category | None:
-    cat = db.get(Category, category_id)
-    if not cat:
+def update_category(db: Session, category_id: int, title: str):
+    obj = get_category(db, category_id)
+    if not obj:
         return None
-    cat.title = new_title
+    obj.title = title
     db.commit()
-    db.refresh(cat)
-    return cat
+    db.refresh(obj)
+    return obj
 
-def delete_category(db: Session, category_id: int) -> bool:
-    cat = db.get(Category, category_id)
-    if not cat:
+def delete_category(db: Session, category_id: int):
+    obj = get_category(db, category_id)
+    if not obj:
         return False
-    db.delete(cat)
+    db.delete(obj)
     db.commit()
     return True
 
-# ---------- Books CRUD ----------
+def get_category_by_title(db: Session, title: str):
+    return db.query(models.Category).filter(models.Category.title == title).first()
 
-def create_book(
-    db: Session,
-    title: str,
-    description: str,
-    price: int,
-    category_id: int,
-    url: str | None = None,
-) -> Book:
-    book = Book(title=title, description=description, price=price, category_id=category_id, url=url)
-    db.add(book)
+# ---------- Books ----------
+def list_books(db: Session):
+    return db.execute(select(models.Book)).scalars().all()
+
+def list_books_by_category(db: Session, category_id: int):
+    stmt = select(models.Book).where(models.Book.category_id == category_id)
+    return db.execute(stmt).scalars().all()
+
+def get_book(db: Session, book_id: int):
+    return db.get(models.Book, book_id)
+
+def create_book(db: Session, *, title: str, description, price: float, url, category_id: int):
+    obj = models.Book(
+        title=title,
+        description=description,
+        price=price,
+        url=url,
+        category_id=category_id
+    )
+    db.add(obj)
     db.commit()
-    db.refresh(book)
-    return book
+    db.refresh(obj)
+    return obj
 
-def get_book_by_id(db: Session, book_id: int) -> Book | None:
-    return db.get(Book, book_id)
-
-def list_books(db: Session) -> list[Book]:
-    return list(db.execute(select(Book).order_by(Book.id)).scalars().all())
-
-def list_books_by_category(db: Session, category_id: int) -> list[Book]:
-    return list(db.execute(select(Book).where(Book.category_id == category_id).order_by(Book.id)).scalars().all())
-
-def update_book_price(db: Session, book_id: int, new_price: int) -> Book | None:
-    book = db.get(Book, book_id)
-    if not book:
+def update_book(db: Session, book_id: int, **fields):
+    obj = get_book(db, book_id)
+    if not obj:
         return None
-    book.price = new_price
+    for k, v in fields.items():
+        if v is not None:
+            setattr(obj, k, v)
     db.commit()
-    db.refresh(book)
-    return book
+    db.refresh(obj)
+    return obj
 
-def delete_book(db: Session, book_id: int) -> bool:
-    book = db.get(Book, book_id)
-    if not book:
+def delete_book(db: Session, book_id: int):
+    obj = get_book(db, book_id)
+    if not obj:
         return False
-    db.delete(book)
+    db.delete(obj)
     db.commit()
     return True

@@ -1,33 +1,41 @@
 from pydantic import BaseModel
 from typing import Optional
 
-# -------- Categories --------
-class CategoryBase(BaseModel):
+class CategoryCreate(BaseModel):
     title: str
 
-class CategoryCreate(CategoryBase):
-    pass
+class CategoryUpdate(BaseModel):
+    title: str
 
-class CategoryResponse(CategoryBase):
+class CategoryResponse(BaseModel):
     id: int
+    title: str
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
-# -------- Books --------
-class BookBase(BaseModel):
+class BookCreate(BaseModel):
+    title: str
+    description: Optional[str] = None
+    price: float
+    url: Optional[str] = None
+    category_id: int
+
+class BookUpdate(BaseModel):
+    title: Optional[str] = None
+    description: Optional[str] = None
+    price: Optional[float] = None
+    url: Optional[str] = None
+    category_id: Optional[int] = None
+
+class BookResponse(BaseModel):
+    id: int
     title: str
     description: Optional[str]
     price: float
     url: Optional[str]
     category_id: int
 
-class BookCreate(BookBase):
-    pass
-
-class BookResponse(BookBase):
-    id: int
-
     class Config:
-        orm_mode = True
+        from_attributes = True
